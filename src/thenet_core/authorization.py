@@ -1,7 +1,4 @@
-"""Policy-gated authorization decisions for prepared CommitIntent records.
-
-This module makes a decision only. It does not execute, persist, or commit changes.
-"""
+"""Policy-gated authorization decisions for prepared CommitIntent records."""
 from __future__ import annotations
 from dataclasses import dataclass
 from hashlib import sha256
@@ -10,6 +7,7 @@ from ._canonical import canonical_json, require_non_empty_strings
 from .attestation import SignedAttestation, TrustedKey, verify_attestation
 from .commit_intent import CommitIntent
 from .genesis import SCHEMA_VERSION
+from .replay_protection import NonceStore
 
 @dataclass(frozen=True, slots=True)
 class AuthorizationPolicy:
@@ -46,13 +44,12 @@ def _reject(intent: CommitIntent, reason: str, evidence_ids: tuple[str, ...], no
 def authorize_commit_intent(
     intent: CommitIntent, attestations: tuple[SignedAttestation, ...],
     trusted_keys: Mapping[str, TrustedKey], policy: AuthorizationPolicy, now: str,
+    nonce_store: NonceStore | None = None,
 ) -> AuthorizationDecision:
-    """Re-verify intent-bound evidence and return a decision without execution.
+    """Re-verify intent-bound evidence and atomically consume its nonces.
 
-    Each required issuer must provide one valid attestation. Its subject must
-    equal the intent identity binding, context must match policy, and signed
-    payload digest must bind the exact intent fields. Caller-supplied verification
-    result objects are never trusted.
+    A durable, shared NonceStore is required for production use. The decision
+    remains descriptive only; it is not an execution capability.
     """
     if not isinstance(intent, CommitIntent):
         raise ValueError("intent must be a CommitIntent instance")
@@ -63,6 +60,8 @@ def authorize_commit_intent(
     if not isinstance(trusted_keys, Mapping):
         raise ValueError("trusted_keys must be a mapping")
     require_non_empty_strings(now=now, required_context=policy.required_context)
+    if nonce_store is not None and not callable(getattr(nonce_store, "claim_many", None)):
+        raise ValueError("nonce_store must implement claim_many")
     if not policy.required_issuers or any(not isinstance(v, str) or not v.strip() for v in policy.required_issuers):
         raise ValueError("required_issuers must contain non-empty issuer IDs")
     if len(set(policy.required_issuers)) != len(policy.required_issuers):
@@ -80,6 +79,7 @@ def authorize_commit_intent(
         return _reject(intent, "duplicate_attestation", evidence_ids, now)
     expected_digest = sha256(authorization_evidence_payload(intent).encode("utf-8")).hexdigest()
     valid_issuers: set[str] = set()
+    claims: list[tuple[str, str, str]] = []
     for attestation in attestations:
         verification = verify_attestation(attestation, trusted_keys, now)
         if verification.status != "verified":
@@ -95,6 +95,11 @@ def authorize_commit_intent(
         if attestation.issuer_id in valid_issuers:
             return _reject(intent, "duplicate_issuer_evidence", evidence_ids, now)
         valid_issuers.add(attestation.issuer_id)
+        claims.append((attestation.issuer_id + "/" + attestation.key_id, attestation.nonce, attestation.expires_at))
     if set(policy.required_issuers) - valid_issuers:
         return _reject(intent, "required_issuer_evidence_missing", evidence_ids, now)
-    return AuthorizationDecision(intent.id, "authorized", "policy_and_evidence_valid", evidence_ids, now)
+    if nonce_store is None:
+        return _reject(intent, "replay_store_required", evidence_ids, now)
+    if not nonce_store.claim_many(tuple(claims), now):
+        return _reject(intent, "replay_detected", evidence_ids, now)
+    return AuthorizationDecision(intent.id, "authorized", "policy_evidence_and_nonce_valid", evidence_ids, now)

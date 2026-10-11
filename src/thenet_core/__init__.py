@@ -2,6 +2,7 @@
 from .agent_state import AgentState, create_agent_state
 from .attestation import AttestationVerification, SignedAttestation, TrustedKey, create_signed_attestation, raw_public_key, verify_attestation
 from .authorization import AuthorizationDecision, AuthorizationPolicy, authorization_evidence_payload, authorize_commit_intent
+from .replay_protection import InMemoryNonceStore, NonceClaim, NonceStore, NonceStoreStats
 from .closure import Closure, create_closure
 from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
 from .commit_intent import CommitIntent, create_commit_intent
@@ -21,7 +22,8 @@ __all__ = [
     "AuthorizationDecision", "AuthorizationPolicy", "Closure", "CommitIntent",
     "Convergence", "CoDefinition", "CoDefinitionContribution", "Genesis",
     "Expression", "Meaning", "MemoryEntry", "Movement", "Relation", "Resonance",
-    "Structure", "SelfKnowledge", "VerificationCheck", "create_agent_state",
+    "Structure", "SelfKnowledge", "VerificationCheck", "NonceClaim", "NonceStore",
+    "NonceStoreStats", "InMemoryNonceStore", "create_agent_state",
     "create_signed_attestation", "raw_public_key", "verify_attestation",
     "authorization_evidence_payload", "authorize_commit_intent", "create_closure",
     "create_commit_intent", "create_convergence", "create_codefinition",

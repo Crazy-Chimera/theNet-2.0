@@ -23,14 +23,18 @@
 The earlier iterations establish Genesis → Relation → AgentState → Structure → Pohyb → Memory → Resonance → Convergence → Meaning → Expression → Self-Knowledge → Co-definition → Closure → prepared CommitIntent. Individual historical CI evidence is retained in repository history.
 
 ## Iteration 14 — Ed25519 signed attestation
-**Goal:** verify signed claims against a supplied local trust policy.
-**Contract:** canonical versioned claims bind issuer, subject, context, payload digest, issue/expiry times, nonce and key ID. Verification checks signature, issuer/key match, allowed context, revocation and validity at an explicit UTC instant.
-**Trust boundary:** the trust map is caller-supplied. Signature validity does not establish real-world identity, claim truth, secure trust-store distribution or persistent anti-replay.
+**Contract:** canonical claims bind issuer, subject, context, payload digest, issue/expiry times, nonce and key ID. Verification checks signature, issuer/key match, allowed context, revocation and validity at an explicit UTC instant.
+**Trust boundary:** trust map is caller-supplied; signature validity does not establish real-world identity, claim truth, secure trust-store distribution or persistent anti-replay.
 **CI:** run 38111078596 passed for commit f42f64e81521932f6c286aca4de4f6addf4bd0f0 (152 tests).
 
 ## Iteration 15 — policy-gated authorization decision
-**Goal:** connect prepared CommitIntent records to cryptographically verified, intent-specific evidence without executing a change.
-**Contract:** policy supplies allowed actions, allowed targets, required context and required issuer IDs. Each required issuer must provide one unique Ed25519 attestation that passes fresh verification against the supplied trust map, uses the intent identity binding as subject, uses the required context, and signs a canonical payload binding intent ID, action, target, identity binding and proposed-change digest.
-**Failure behavior:** invalid signatures, unknown/revoked keys, wrong subject/context, evidence for another intent, missing issuer evidence, duplicate evidence and disallowed action/target reject. Invalid argument types raise ValueError.
-**Trust boundary:** policy and trust map remain caller-supplied. This is not proof of real-world identity, proposed-change truth, secure policy distribution, persistent nonce replay prevention or verified closure provenance. An authorized decision is not an execution token and does not mutate state or create a Git commit.
-**CI:** run 38111295066 passed for commit f307921524af1dc29adb1899a25c15f3cf1377b7; package build and installation passed, and 163 tests passed.
+**Contract:** policy supplies allowed actions, targets, context and required issuer IDs. Each required issuer must provide a unique valid Ed25519 attestation whose subject is the intent identity binding and whose signed payload binds intent ID, action, target, identity binding and proposed-change digest.
+**Trust boundary:** policy and trust map remain caller-supplied. An authorized decision is not an execution token.
+**CI:** run 38111295066 passed for commit f307921524af1dc29adb1899a25c15f3cf1377b7 (163 tests).
+
+## Iteration 16 — nonce replay protection
+**Goal:** prevent a valid attestation nonce from authorizing more than once while its validity window remains active.
+**Contract:** nonce scope is issuer plus key ID. A NonceStore must atomically claim all nonce tuples or none. Authorization fails closed without a store, re-verifies evidence before claiming nonces, and returns rejected/replay_detected if a claim is already active.
+**Acceptance:** second use rejected, expired claims pruned, batch claims atomic, duplicate claims rejected, and concurrent claims yield one winner.
+**Trust boundary:** InMemoryNonceStore is process-local and non-durable. Production requires a shared durable transactional implementation; no such adapter is included in this iteration.
+**CI:** pending.

@@ -1,20 +1,22 @@
 # theNet-2.0
 
-**Status: Iteration 15 — policy-gated authorization decision complete; CI passed (run 38111295066, 163 tests).**
+**Status: Iteration 16 — nonce replay protection implemented with a process-local atomic store; CI pending.**
 
 theNet-2.0 implements a relational, evolutionary network architecture while keeping infrastructure integrations explicit and verifiable.
 
 ## Architectural sequence
 
-Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure → prepared evolution → identity and evidence verification → policy-gated authorization decision.
+Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure → prepared evolution → signed evidence → policy-gated authorization → nonce replay protection.
 
 ## Current executable slice
 
-The thenet_core package provides immutable records and deterministic identifiers for Genesis, Relation, AgentState, Structure, Pohyb, MemoryEntry, Resonance, Convergence, Meaning, Expression, SelfKnowledge, CoDefinition, Closure and CommitIntent. Ed25519 attestations verify canonical signed claims under a supplied local trust policy.
+The thenet_core package provides immutable records and deterministic identifiers for the architecture's domain layers, Ed25519 signed attestations, policy-gated authorization decisions, and nonce replay protection.
 
-AuthorizationPolicy and AuthorizationDecision evaluate whether a prepared intent is bound to valid signed evidence and allowed action, target, context and issuer policy. Evidence is re-verified during the decision and its digest must bind the exact intent ID, action, target, identity binding and proposed-change digest. The decision is a record only; it does not execute changes.
+Authorization re-verifies each attestation and checks the action, target, subject, context, required issuers, and canonical digest of the exact CommitIntent. It then atomically claims all issuer/key-scoped nonces before returning an authorized decision. A missing nonce store fails closed.
 
-The core does not connect to databases, network services, DID registries or key stores. Trust policy and key-map provenance remain external. A successful authorization decision is not proof of real-world identity, proposal truth, secure policy distribution, persistent nonce replay prevention or verified closure provenance. Secrets and private keys must never be committed.
+`InMemoryNonceStore` is thread-safe and all-or-none for a single process, but it is not durable and does not coordinate multiple workers or hosts. Production use requires a shared durable implementation of `NonceStore` with an atomic transaction or uniqueness constraint. An authorized decision is still only a record: it does not execute a change, mutate system state, or create a Git commit.
+
+Trust policy and trust-map provenance remain external. Signature validity does not prove real-world identity or claim truth. Secrets and private keys must never be committed.
 
 ## Platform layers
 
