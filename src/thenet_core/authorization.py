@@ -100,6 +100,12 @@ def authorize_commit_intent(
         return _reject(intent, "required_issuer_evidence_missing", evidence_ids, now)
     if nonce_store is None:
         return _reject(intent, "replay_store_required", evidence_ids, now)
-    if not nonce_store.claim_many(tuple(claims), now):
+    try:
+        claimed = nonce_store.claim_many(tuple(claims), now)
+    except Exception:
+        # Storage outages and transaction errors must never become authorization.
+        # Keep the decision non-sensitive; operational details belong in protected logs.
+        return _reject(intent, "nonce_store_unavailable", evidence_ids, now)
+    if not claimed:
         return _reject(intent, "replay_detected", evidence_ids, now)
     return AuthorizationDecision(intent.id, "authorized", "policy_evidence_and_nonce_valid", evidence_ids, now)

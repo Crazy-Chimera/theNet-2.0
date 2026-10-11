@@ -50,6 +50,28 @@ def test_missing_nonce_store_fails_closed():
     result = authorize_commit_intent(intent, (item,), TRUST, POLICY, NOW)
     assert (result.status, result.reason) == ("rejected", "replay_store_required")
 
+
+def test_nonce_store_exception_fails_closed():
+    class UnavailableStore:
+        def claim_many(self, claims, now):
+            raise RuntimeError("database unavailable")
+
+    intent = build()
+    item = evidence(intent)
+    result = decide(intent, (item,), nonce_store=UnavailableStore())
+    assert (result.status, result.reason) == ("rejected", "nonce_store_unavailable")
+
+
+def test_nonce_store_conflict_is_rejected_without_authorization():
+    class ConflictStore:
+        def claim_many(self, claims, now):
+            return False
+
+    intent = build()
+    item = evidence(intent)
+    result = decide(intent, (item,), nonce_store=ConflictStore())
+    assert (result.status, result.reason) == ("rejected", "replay_detected")
+
 def test_store_claims_are_atomic_when_one_nonce_repeats():
     store = InMemoryNonceStore()
     assert store.claim_many((("issuer-a/key-a", "n1", EXPIRES),), NOW)
