@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 15 — policy-gated authorization decision implemented; CI pending.**
+**Status: Iteration 15 — policy-gated authorization decision complete; CI passed (run 38111295066, 163 tests).**
 
 theNet-2.0 implements a relational, evolutionary network architecture while keeping infrastructure integrations explicit and verifiable.
 
