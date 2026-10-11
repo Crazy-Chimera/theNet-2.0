@@ -98,7 +98,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **CI result:** run 38110404811 passed for commit 8c1035f18ac79b94b79baa622d335e9fc290b175.
 
-## Iteration 12 — Σ / ΙΩΤΑ closure implementation submitted; CI verification pending
+## Iteration 12 — Σ / ΙΩΤΑ closure complete
 
 **Goal:** integrate the implemented existence-architecture layers into one deterministic closure snapshot.
 
@@ -107,3 +107,6 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Trust boundary:** this is a cross-reference integrity check over supplied immutable records. It does not authenticate identities or evidence, prove semantics, execute or activate proposals, provision infrastructure, or establish metaphysical unity.
 
 **Acceptance:** valid full-chain binding, deterministic identity, wrong types, mismatched Genesis/structure/resonance/convergence/meaning/expression/self-model references, missing co-definition provenance, disputed agreement, immutability and no external-verification or activation claim.
+
+
+**CI result:** run 38110619932 passed for commit 506b3bbb01dcd7c4e078fa4d77a4c87e7b6caf7b. The first two runs exposed test-fixture/assertion issues; both were corrected, and the passing run reported 131 passed tests.

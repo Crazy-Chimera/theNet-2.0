@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 12 — Σ / ΙΩΤΑ closure implemented; CI verification pending.**
+**Status: Iteration 12 — Σ / ΙΩΤΑ closure complete; CI passed (run 38110619932).**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
