@@ -50,13 +50,20 @@ def create_resonance(
 
     states_by_subject = {state.subject_id: state for state in structure.states}
     entries_by_id = {entry.id: entry for entry in entries}
+    predecessor_ids = {
+        entry.previous_entry_id
+        for entry in entries
+        if entry.previous_entry_id is not None
+    }
     for entry in entries:
         if entry.genesis_id != structure.genesis_id:
             raise ValueError("memory entry must share the structure Genesis")
         state = states_by_subject.get(entry.subject_id)
         if state is None:
             raise ValueError("memory subject is not represented in structure")
-        if entry.to_state_id != state.id:
+        # Historical entries may end at an earlier state. Only the chain tip
+        # for each subject must agree with the current structure snapshot.
+        if entry.id not in predecessor_ids and entry.to_state_id != state.id:
             raise ValueError("memory terminal state does not match structure state")
         if entry.previous_entry_id is not None:
             previous = entries_by_id.get(entry.previous_entry_id)

@@ -36,12 +36,14 @@ Iteration 4 implemented Ω Pohyb; CI passed for `d5ddd2ef42b8dfc093f68dc88b36817
 
 Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bfd575018ca438` (run 38109761052).
 
-## Iteration 6 — implementation submitted; CI verification pending
+## Iteration 6 — correction submitted; CI verification pending
 
 **Goal:** implement ΦΩ² Resonance as a deterministic coherence snapshot across a structure and linked memory records.
 
 **Contract:** every memory entry must share the structure Genesis, refer to a represented subject, and end at that subject's current state. Referenced predecessor entries must be included and form a contiguous chain. Entry IDs are unique and canonical ordering makes resonance identity independent of input ordering.
 
 **Acceptance:** coherent chain, order-independent deterministic identity, invalid types, foreign Genesis, terminal-state mismatch, missing predecessor, duplicate entries and immutability.
+
+**CI correction:** the initial implementation incorrectly required every historical entry to end at the current state. Validation now applies the current-state check only to chain tips; historical entries remain subject to predecessor continuity checks.
 
 **Known limits:** this validates supplied metadata only. It does not authenticate signatures, prove causality, provide external persistence or calculate semantic resonance.
