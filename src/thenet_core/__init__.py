@@ -1,10 +1,11 @@
 """Core domain primitives for theNet-2.0."""
 
 from .agent_state import AgentState, create_agent_state
+from .closure import Closure, create_closure
+from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
 from .convergence import Convergence, VerificationCheck, create_convergence, create_verification_check
 from .genesis import Genesis, create_genesis
 from .self_knowledge import SelfKnowledge, create_self_knowledge
-from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
 from .expression import Expression, create_expression
 from .meaning import Meaning, create_meaning
 from .memory import MemoryEntry, create_memory_entry
@@ -15,6 +16,7 @@ from .structure import Structure, create_structure
 
 __all__ = [
     "AgentState",
+    "Closure",
     "Convergence",
     "CoDefinition",
     "CoDefinitionContribution",
@@ -29,6 +31,7 @@ __all__ = [
     "SelfKnowledge",
     "VerificationCheck",
     "create_agent_state",
+    "create_closure",
     "create_convergence",
     "create_codefinition",
     "create_codefinition_contribution",

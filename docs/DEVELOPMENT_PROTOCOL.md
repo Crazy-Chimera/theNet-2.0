@@ -48,7 +48,6 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **Known limits:** this validates supplied metadata only. It does not authenticate signatures, prove causality, provide external persistence or calculate semantic resonance.
 
-
 ## Iteration 7 — Γ Convergence complete
 
 **Goal:** create a deterministic decision record for a proposal based on explicit verification checks.
@@ -56,9 +55,6 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Contract:** required check IDs must be unique and non-empty. Check records must be typed, unique and limited to the declared required set. A proposal is accepted only if every required check is present and passing; missing or failed checks reject it. Canonical ordering makes the result independent of input order.
 
 **Trust boundary:** check status and evidence digests are supplied claims. This module does not authenticate evidence, run checks, interpret semantics, execute proposals or activate changes.
-
-**Acceptance:** complete passing checks, missing check, failed check, deterministic order independence, duplicate/unrequested checks, invalid types and immutability.
-
 
 **CI result:** run 38110020640 passed for commit f357d7a4669ae464d1b51d6faf8bc57145de8a4f.
 
@@ -70,9 +66,6 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **Trust boundary:** this layer validates references only. It does not establish that an interpretation is true, high quality, authored by a trusted actor, or semantically correct.
 
-**Acceptance:** valid evidence references, deterministic identity, order independence, interpretation of rejected outcomes, invalid convergence, empty interpretation/basis, duplicate/unknown basis IDs and immutability.
-
-
 **CI result:** run 38110123950 passed for commit 9533b5b2d0f2004581d5c6528918b88b411b6a43.
 
 ## Iteration 9 — Ψ Expression complete
@@ -82,9 +75,6 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Contract:** an Expression requires a Meaning plus non-empty channel, format and content. It stores a SHA-256 content digest rather than raw content. Its deterministic identifier binds the Meaning ID, intended channel, format, digest and schema version.
 
 **Trust boundary:** the record describes intended output only. It does not dispatch content, authenticate the referenced Meaning, or prove delivery, receipt or acceptance.
-
-**Acceptance:** valid binding, deterministic identity, identity changes when channel/format/content changes, invalid Meaning type, empty fields, immutability and explicit non-delivery semantics.
-
 
 **CI result:** run 38110210904 passed for commit 68dc818e8d89cd74272b365d578da843707ec0fc.
 
@@ -96,17 +86,24 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **Trust boundary:** declarations are caller-supplied. The module does not prove that capabilities exist, that limitations are complete, that the system is conscious, or that self-modification is authorized.
 
-**Acceptance:** valid source binding, deterministic/order-independent identity, changed model digest, invalid source type, empty model, missing limitations, malformed/duplicate claims and immutability.
-
-
 **CI result:** run 38110302464 passed for commit 97571730549a933d8d1673252151a92546712969.
 
-## Iteration 11 — Ρ Relational Co-definition implementation submitted; CI verification pending
+## Iteration 11 — Ρ Relational Co-definition complete
 
 **Goal:** represent a shared definition assembled from explicitly attributed contributions.
 
-**Contract:** a co-definition requires non-empty context and at least two contributions from distinct contributor IDs. Each contribution links to a SelfKnowledge snapshot, stores a digest of its content, and records explicit assent. Contributions are canonically ordered. Agreement is "agreed" only when all contributors assent; otherwise it is "disputed". Verification status remains "unverified".
+**Contract:** a co-definition requires non-empty context and at least two contributions from distinct contributor IDs. Each contribution links to a SelfKnowledge snapshot, stores a digest of its content, and records explicit assent. Contributions are canonically ordered. Agreement is "agreed" only when all assents; otherwise it is "disputed". Verification status remains "unverified".
 
 **Trust boundary:** contributor IDs and assent are supplied declarations. The module does not authenticate identities, establish legal authority, verify contribution truth, or infer consent beyond the explicit boolean supplied.
 
-**Acceptance:** valid joint definition, order-independent identity, context binding, unanimous/disputed status, source binding, invalid types, empty fields, insufficient/duplicate contributors and immutability.
+**CI result:** run 38110404811 passed for commit 8c1035f18ac79b94b79baa622d335e9fc290b175.
+
+## Iteration 12 — Σ / ΙΩΤΑ closure implementation submitted; CI verification pending
+
+**Goal:** integrate the implemented existence-architecture layers into one deterministic closure snapshot.
+
+**Contract:** Genesis, Structure, Resonance, Convergence, Meaning, Expression, SelfKnowledge and CoDefinition must be correctly typed and reference one another consistently. The co-definition must include the supplied SelfKnowledge record. Proposal decision and contributor agreement remain separate fields. The closure is always marked "unverified".
+
+**Trust boundary:** this is a cross-reference integrity check over supplied immutable records. It does not authenticate identities or evidence, prove semantics, execute or activate proposals, provision infrastructure, or establish metaphysical unity.
+
+**Acceptance:** valid full-chain binding, deterministic identity, wrong types, mismatched Genesis/structure/resonance/convergence/meaning/expression/self-model references, missing co-definition provenance, disputed agreement, immutability and no external-verification or activation claim.
