@@ -1,12 +1,23 @@
 # theNet-2.0
 
-**Status: Iteration 1 — architecture and development contract.**
+**Status: Iteration 2 — foundational domain primitives committed; CI verification pending.**
 
 theNet-2.0 is the next implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
 ## Architectural sequence
 
 Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure.
+
+## Current executable slice
+
+The `thenet_core` package implements:
+- `Genesis`: immutable origin record with deterministic identifier.
+- `Relation`: immutable directed relation with deterministic identifier.
+- `AgentState`: immutable state record anchored to a Genesis identifier.
+- Canonical JSON and SHA-256 identity derivation.
+- Input validation and automated positive, negative, immutability and determinism tests.
+
+The domain core has no runtime dependencies and does not connect to databases, network services, DID registries or key stores.
 
 ## Platform layers
 

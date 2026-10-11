@@ -32,6 +32,16 @@ For each iteration record:
 - known limitations;
 - commit SHA and next bounded step.
 
-## Current iteration state
+## Iteration 1 — complete
 
-**Iteration 1 — context and architecture contract.** Acceptance: target repository was inspected; the intended existence architecture, infrastructure layers and development gates are documented without falsely claiming that external services are provisioned.
+Context, architecture layers, invariants and development gates are documented. No infrastructure was represented as deployed.
+
+## Iteration 2 — implementation submitted; CI evidence pending
+
+**Goal:** establish the first executable vertical slice: Genesis → Relation → AgentState.
+
+**Contract:** immutable versioned values; non-empty string boundary validation; stable SHA-256 identifiers over canonical JSON; directed relations; AgentState identity anchored to a Genesis identifier; no network/database dependencies.
+
+**Acceptance:** positive, invalid-input, immutability, identity sensitivity and determinism tests; package builds; CI runs on pushes and pull requests.
+
+**Verification status:** source and tests are committed, but runtime test/build results must be read from GitHub Actions before declaring this iteration verified.
