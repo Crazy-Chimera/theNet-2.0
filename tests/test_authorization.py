@@ -72,6 +72,31 @@ def test_nonce_store_conflict_is_rejected_without_authorization():
     result = decide(intent, (item,), nonce_store=ConflictStore())
     assert (result.status, result.reason) == ("rejected", "replay_detected")
 
+def test_ambiguous_store_commit_retry_fails_closed_without_second_claim():
+    class CommitOutcomeUnknownStore:
+        def __init__(self):
+            self.inner = InMemoryNonceStore()
+            self.first = True
+
+        def claim_many(self, claims, now):
+            claimed = self.inner.claim_many(claims, now)
+            if self.first:
+                self.first = False
+                # Simulate the claim being committed while the client loses
+                # confirmation and receives a connection error.
+                raise RuntimeError("commit outcome unknown")
+            return claimed
+
+    intent = build()
+    item = evidence(intent)
+    store = CommitOutcomeUnknownStore()
+
+    first = decide(intent, (item,), nonce_store=store)
+    retry = decide(intent, (item,), nonce_store=store)
+
+    assert (first.status, first.reason) == ("rejected", "nonce_store_unavailable")
+    assert (retry.status, retry.reason) == ("rejected", "replay_detected")
+
 def test_store_claims_are_atomic_when_one_nonce_repeats():
     store = InMemoryNonceStore()
     assert store.claim_many((("issuer-a/key-a", "n1", EXPIRES),), NOW)
