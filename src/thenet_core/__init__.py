@@ -4,6 +4,7 @@ from .agent_state import AgentState, create_agent_state
 from .convergence import Convergence, VerificationCheck, create_convergence, create_verification_check
 from .genesis import Genesis, create_genesis
 from .self_knowledge import SelfKnowledge, create_self_knowledge
+from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
 from .expression import Expression, create_expression
 from .meaning import Meaning, create_meaning
 from .memory import MemoryEntry, create_memory_entry
@@ -15,6 +16,8 @@ from .structure import Structure, create_structure
 __all__ = [
     "AgentState",
     "Convergence",
+    "CoDefinition",
+    "CoDefinitionContribution",
     "Genesis",
     "Expression",
     "Meaning",
@@ -27,6 +30,8 @@ __all__ = [
     "VerificationCheck",
     "create_agent_state",
     "create_convergence",
+    "create_codefinition",
+    "create_codefinition_contribution",
     "create_genesis",
     "create_expression",
     "create_meaning",

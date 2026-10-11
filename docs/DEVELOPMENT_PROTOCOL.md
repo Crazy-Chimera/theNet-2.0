@@ -88,7 +88,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **CI result:** run 38110210904 passed for commit 68dc818e8d89cd74272b365d578da843707ec0fc.
 
-## Iteration 10 — Θ Self-Knowledge implementation submitted; CI verification pending
+## Iteration 10 — Θ Self-Knowledge complete
 
 **Goal:** create a deterministic self-model snapshot tied to a known Expression.
 
@@ -97,3 +97,16 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Trust boundary:** declarations are caller-supplied. The module does not prove that capabilities exist, that limitations are complete, that the system is conscious, or that self-modification is authorized.
 
 **Acceptance:** valid source binding, deterministic/order-independent identity, changed model digest, invalid source type, empty model, missing limitations, malformed/duplicate claims and immutability.
+
+
+**CI result:** run 38110302464 passed for commit 97571730549a933d8d1673252151a92546712969.
+
+## Iteration 11 — Ρ Relational Co-definition implementation submitted; CI verification pending
+
+**Goal:** represent a shared definition assembled from explicitly attributed contributions.
+
+**Contract:** a co-definition requires non-empty context and at least two contributions from distinct contributor IDs. Each contribution links to a SelfKnowledge snapshot, stores a digest of its content, and records explicit assent. Contributions are canonically ordered. Agreement is "agreed" only when all contributors assent; otherwise it is "disputed". Verification status remains "unverified".
+
+**Trust boundary:** contributor IDs and assent are supplied declarations. The module does not authenticate identities, establish legal authority, verify contribution truth, or infer consent beyond the explicit boolean supplied.
+
+**Acceptance:** valid joint definition, order-independent identity, context binding, unanimous/disputed status, source binding, invalid types, empty fields, insufficient/duplicate contributors and immutability.

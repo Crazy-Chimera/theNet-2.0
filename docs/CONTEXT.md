@@ -49,3 +49,8 @@ The intended platform layers and their responsibilities are defined in `ARCHITEC
 ## Completion criteria
 
 A module is complete only when its contract, implementation, positive/negative/edge tests, relevant determinism and integrity checks, integration checks, and verification record agree. A passing unit test alone does not prove production readiness.
+
+
+## Relational co-definition boundary
+
+A shared definition contains explicit contributions attributed to distinct declared contributor IDs. Each contribution references a SelfKnowledge record and retains only a content digest. "Agreed" means all supplied assent flags are true; "disputed" means at least one is false. Both remain unverified records until a separate identity, authorization and evidence-verification layer is implemented.
