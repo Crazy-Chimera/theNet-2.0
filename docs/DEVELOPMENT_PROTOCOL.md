@@ -37,4 +37,4 @@ The earlier iterations establish Genesis → Relation → AgentState → Structu
 **Contract:** nonce scope is issuer plus key ID. A NonceStore must atomically claim all nonce tuples or none. Authorization fails closed without a store, re-verifies evidence before claiming nonces, and returns rejected/replay_detected if a claim is already active.
 **Acceptance:** second use rejected, expired claims pruned, batch claims atomic, duplicate claims rejected, and concurrent claims yield one winner.
 **Trust boundary:** InMemoryNonceStore is process-local and non-durable. Production requires a shared durable transactional implementation; no such adapter is included in this iteration.
-**CI:** pending.
+**CI:** run 38111490989 passed for commit 552039bf443265ec20ddd98bf01be9befbbbdadc (168 tests passed).

@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 16 — nonce replay protection implemented with a process-local atomic store; CI pending.**
+**Status: Iteration 16 — nonce replay protection complete; CI passed (run 38111490989, 168 tests).**
 
 theNet-2.0 implements a relational, evolutionary network architecture while keeping infrastructure integrations explicit and verifiable.
 
