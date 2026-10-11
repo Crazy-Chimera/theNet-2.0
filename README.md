@@ -1,12 +1,12 @@
 # theNet-2.0
 
-**Status: Iteration 12 — Σ / ΙΩΤΑ closure complete; CI passed (run 38110619932).**
+**Status: Iteration 13 — prepared commit-intent gate implemented; CI verification pending.**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
 ## Architectural sequence
 
-Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure.
+Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure → verified evolution.
 
 ## Current executable slice
 
@@ -23,7 +23,8 @@ The `thenet_core` package implements:
 - `Expression`: immutable output metadata bound to a Meaning and a content digest; raw content is not retained and no delivery is performed.
 - `SelfKnowledge`: immutable self-model snapshot bound to an Expression, with declared capabilities and at least one explicit limitation; it does not prove self-awareness or claim correctness.
 - `CoDefinitionContribution` and `CoDefinition`: immutable, digest-bound joint-definition records with distinct contributors, explicit assent, deterministic ordering, and a separate `unverified` verification status.
-- `Closure`: a deterministic Σ / ΙΩΤΑ integration snapshot validating references across Genesis → Structure → Resonance → Convergence → Meaning → Expression → SelfKnowledge → CoDefinition. Structural coherence is distinct from proposal acceptance, contributor agreement, external verification or activation.
+- `Closure`: deterministic Σ / ΙΩΤΑ integration snapshot validating references across the implemented existence-architecture layers.
+- `CommitIntent`: deterministic prepared-change record bound to a Closure and its self-knowledge identity; requires an accepted declared decision and unanimous declared assent, but remains `prepared` and `not_authorized`.
 - Canonical JSON and SHA-256 identity derivation.
 - Automated positive, invalid-input, immutability, integrity and determinism tests.
 
@@ -48,4 +49,4 @@ These are target architecture choices, not a claim that every service is already
 - Architecture contract: `docs/ARCHITECTURE.md`
 - Context and invariants: `docs/CONTEXT.md`
 
-Convergence evaluates supplied check records only. Meaning validates references to those records, not the truth or semantics of the interpretation. Expression binds intended output metadata to a Meaning but does not dispatch it or prove delivery. SelfKnowledge records supplied self-model claims and limitations but does not establish consciousness, truth, or self-modification authority. CoDefinition distinguishes unanimous declared assent from disputed input but does not authenticate participants, prove truth, or establish legal authority. Closure validates cross-layer references only; it does not authenticate evidence, execute proposals, activate changes, or prove metaphysical unity. No runtime or infrastructure integration is considered complete until its tests and verification evidence are recorded.
+Convergence evaluates supplied check records only. Meaning validates references to those records, not the truth or semantics of the interpretation. Expression binds intended output metadata to a Meaning but does not dispatch it or prove delivery. SelfKnowledge records supplied self-model claims and limitations but does not establish consciousness, truth, or self-modification authority. CoDefinition distinguishes unanimous declared assent from disputed input but does not authenticate participants, prove truth, or establish legal authority. Closure validates cross-layer references only. CommitIntent prepares a change description but never authorizes or executes it; external identity, evidence, policy and commit verification remain separate requirements. No runtime or infrastructure integration is considered complete until its tests and verification evidence are recorded.

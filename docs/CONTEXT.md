@@ -18,8 +18,9 @@ Build theNet-2.0 iteratively on the relational architecture and tested engineeri
 10. Θ Self-Knowledge
 11. Ρ Relational Co-definition
 12. Σ + ΙΩΤΑ closure
+13. Prepared commit intent for verified evolution
 
-The foundational closure is followed by verified system evolution.
+The foundational closure is followed by verified system evolution. Preparing an intent does not itself authorize or apply the change.
 
 ## Core loop
 
@@ -57,3 +58,7 @@ A shared definition contains explicit contributions attributed to distinct decla
 ## Σ / ΙΩΤΑ closure boundary
 
 A closure snapshot integrates Genesis, Structure, Resonance, Convergence, Meaning, Expression, SelfKnowledge and CoDefinition only when their declared references agree. The closure records proposal decision and contributor agreement separately and always remains `unverified`. It proves referential coherence within the supplied records, not external authenticity, execution, activation, deployment or metaphysical unity.
+
+## Prepared commit-intent boundary
+
+A CommitIntent can be created only from a closure whose supplied convergence decision is accepted and whose declared co-definition assent is unanimous. It binds the action, target, proposed-change digest and SelfKnowledge identifier. Its status is always `prepared` and authorization is always `not_authorized`; it cannot execute changes, mutate state or create Git commits. The acceptance and assent gates are caller-supplied records and are not external authentication.

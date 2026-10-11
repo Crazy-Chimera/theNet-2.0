@@ -62,7 +62,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **Goal:** represent an explicit interpretation linked to check records in a convergence decision.
 
-**Contract:** the interpretation must be non-empty and cite at least one unique basis check ID that exists in the referenced convergence. Basis IDs are canonicalized, so their input order does not affect the meaning identifier. Interpretations can describe accepted or rejected proposals.
+**Contract:** the interpretation must be non-empty and cite at least one unique basis check ID that exists in the referenced convergence. Basis IDs are canonicalized, so their input order does not affect the meaning identifier. Interpretations can describe accepted or rejected outcomes.
 
 **Trust boundary:** this layer validates references only. It does not establish that an interpretation is true, high quality, authored by a trusted actor, or semantically correct.
 
@@ -108,5 +108,14 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **Acceptance:** valid full-chain binding, deterministic identity, wrong types, mismatched Genesis/structure/resonance/convergence/meaning/expression/self-model references, missing co-definition provenance, disputed agreement, immutability and no external-verification or activation claim.
 
+**CI result:** run 38110619932 passed for commit 506b3bbb01dcd7c4e078fa4d77a4c87e7b6caf7b. Two earlier runs exposed test-fixture/assertion issues, which were corrected before this passing run (131 tests passed).
 
-**CI result:** run 38110619932 passed for commit 506b3bbb01dcd7c4e078fa4d77a4c87e7b6caf7b. The first two runs exposed test-fixture/assertion issues; both were corrected, and the passing run reported 131 passed tests.
+## Iteration 13 — Prepared commit intent implementation submitted; CI verification pending
+
+**Goal:** represent a deterministic, bounded intent for a proposed system change without granting execution authority.
+
+**Contract:** the intent must bind to a Closure whose supplied convergence decision is accepted and whose declared co-definition assent is unanimous. It binds the Closure ID, SelfKnowledge identity binding, action, target and SHA-256 digest of proposed change content. The status is always "prepared" and authorization is always "not_authorized".
+
+**Trust boundary:** convergence checks and assent are caller-supplied claims; closure is unverified. This module does not authenticate identities/evidence, authorize or execute changes, mutate state, or create Git commits.
+
+**Acceptance:** valid prepared intent, deterministic identity, action/target/change binding, invalid types and empty fields, rejected convergence, disputed assent, immutability and no execution/authorization claims.

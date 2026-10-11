@@ -3,6 +3,7 @@
 from .agent_state import AgentState, create_agent_state
 from .closure import Closure, create_closure
 from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
+from .commit_intent import CommitIntent, create_commit_intent
 from .convergence import Convergence, VerificationCheck, create_convergence, create_verification_check
 from .genesis import Genesis, create_genesis
 from .self_knowledge import SelfKnowledge, create_self_knowledge
@@ -17,6 +18,7 @@ from .structure import Structure, create_structure
 __all__ = [
     "AgentState",
     "Closure",
+    "CommitIntent",
     "Convergence",
     "CoDefinition",
     "CoDefinitionContribution",
@@ -32,6 +34,7 @@ __all__ = [
     "VerificationCheck",
     "create_agent_state",
     "create_closure",
+    "create_commit_intent",
     "create_convergence",
     "create_codefinition",
     "create_codefinition_contribution",
