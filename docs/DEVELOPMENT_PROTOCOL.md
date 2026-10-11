@@ -62,7 +62,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **CI result:** run 38110020640 passed for commit f357d7a4669ae464d1b51d6faf8bc57145de8a4f.
 
-## Iteration 8 — Π Meaning implementation submitted; CI verification pending
+## Iteration 8 — Π Meaning complete
 
 **Goal:** represent an explicit interpretation linked to check records in a convergence decision.
 
@@ -71,3 +71,16 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Trust boundary:** this layer validates references only. It does not establish that an interpretation is true, high quality, authored by a trusted actor, or semantically correct.
 
 **Acceptance:** valid evidence references, deterministic identity, order independence, interpretation of rejected outcomes, invalid convergence, empty interpretation/basis, duplicate/unknown basis IDs and immutability.
+
+
+**CI result:** run 38110123950 passed for commit 9533b5b2d0f2004581d5c6528918b88b411b6a43.
+
+## Iteration 9 — Ψ Expression implementation submitted; CI verification pending
+
+**Goal:** represent a deterministic output artifact that is explicitly bound to a declared Meaning.
+
+**Contract:** an Expression requires a Meaning plus non-empty channel, format and content. It stores a SHA-256 content digest rather than raw content. Its deterministic identifier binds the Meaning ID, intended channel, format, digest and schema version.
+
+**Trust boundary:** the record describes intended output only. It does not dispatch content, authenticate the referenced Meaning, or prove delivery, receipt or acceptance.
+
+**Acceptance:** valid binding, deterministic identity, identity changes when channel/format/content changes, invalid Meaning type, empty fields, immutability and explicit non-delivery semantics.
