@@ -1,6 +1,7 @@
 """Core domain primitives for theNet-2.0."""
 
 from .agent_state import AgentState, create_agent_state
+from .attestation import AttestationVerification, SignedAttestation, TrustedKey, create_signed_attestation, raw_public_key, verify_attestation
 from .closure import Closure, create_closure
 from .codefinition import CoDefinition, CoDefinitionContribution, create_codefinition, create_codefinition_contribution
 from .commit_intent import CommitIntent, create_commit_intent
@@ -17,6 +18,9 @@ from .structure import Structure, create_structure
 
 __all__ = [
     "AgentState",
+    "AttestationVerification",
+    "SignedAttestation",
+    "TrustedKey",
     "Closure",
     "CommitIntent",
     "Convergence",
@@ -33,6 +37,9 @@ __all__ = [
     "SelfKnowledge",
     "VerificationCheck",
     "create_agent_state",
+    "create_signed_attestation",
+    "raw_public_key",
+    "verify_attestation",
     "create_closure",
     "create_commit_intent",
     "create_convergence",

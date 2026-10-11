@@ -1,12 +1,12 @@
 # theNet-2.0
 
-**Status: Iteration 13 — prepared commit-intent gate complete; CI passed (run 38110703374).**
+**Status: Iteration 14 — Ed25519 attestation verification implemented; CI verification pending.**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
 ## Architectural sequence
 
-Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure → verified evolution.
+Genesis → Relation → Φ Structure → Ω Pohyb → Ω² Memory → ΦΩ² Resonance → Γ Convergence → Π Meaning → Ψ Expression → Θ Self-Knowledge → Ρ Relational Co-definition → Σ / ΙΩΤΑ closure → prepared evolution → identity and evidence verification.
 
 ## Current executable slice
 
@@ -25,7 +25,7 @@ The `thenet_core` package implements:
 - `CoDefinitionContribution` and `CoDefinition`: immutable, digest-bound joint-definition records with distinct contributors, explicit assent, deterministic ordering, and a separate `unverified` verification status.
 - `Closure`: deterministic Σ / ΙΩΤΑ integration snapshot validating references across the implemented existence-architecture layers.
 - `CommitIntent`: deterministic prepared-change record bound to a Closure and its self-knowledge identity; requires an accepted declared decision and unanimous declared assent, but remains `prepared` and `not_authorized`.
-- Canonical JSON and SHA-256 identity derivation.
+- Ed25519 signed attestations with explicit local trust policy, context restrictions, key revocation flag, UTC validity checks and canonical payload signatures.\n- Canonical JSON and SHA-256 identity derivation.
 - Automated positive, invalid-input, immutability, integrity and determinism tests.
 
 The domain core has no runtime dependencies and does not connect to databases, network services, DID registries or key stores.
@@ -50,3 +50,4 @@ These are target architecture choices, not a claim that every service is already
 - Context and invariants: `docs/CONTEXT.md`
 
 Convergence evaluates supplied check records only. Meaning validates references to those records, not the truth or semantics of the interpretation. Expression binds intended output metadata to a Meaning but does not dispatch it or prove delivery. SelfKnowledge records supplied self-model claims and limitations but does not establish consciousness, truth, or self-modification authority. CoDefinition distinguishes unanimous declared assent from disputed input but does not authenticate participants, prove truth, or establish legal authority. Closure validates cross-layer references only. CommitIntent prepares a change description but never authorizes or executes it; external identity, evidence, policy and commit verification remain separate requirements. No runtime or infrastructure integration is considered complete until its tests and verification evidence are recorded.
+\n\nA successful attestation verification authenticates signed bytes under the supplied local trust policy; it does not prove real-world identity or the truth of a claim. Trust-store integrity, key rotation/recovery, persistent nonce replay detection, authorization and execution remain separate requirements.\n
