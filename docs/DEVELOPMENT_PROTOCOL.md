@@ -49,7 +49,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Known limits:** this validates supplied metadata only. It does not authenticate signatures, prove causality, provide external persistence or calculate semantic resonance.
 
 
-## Iteration 7 — Γ Convergence implementation submitted; CI verification pending
+## Iteration 7 — Γ Convergence complete
 
 **Goal:** create a deterministic decision record for a proposal based on explicit verification checks.
 
@@ -58,3 +58,16 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Trust boundary:** check status and evidence digests are supplied claims. This module does not authenticate evidence, run checks, interpret semantics, execute proposals or activate changes.
 
 **Acceptance:** complete passing checks, missing check, failed check, deterministic order independence, duplicate/unrequested checks, invalid types and immutability.
+
+
+**CI result:** run 38110020640 passed for commit f357d7a4669ae464d1b51d6faf8bc57145de8a4f.
+
+## Iteration 8 — Π Meaning implementation submitted; CI verification pending
+
+**Goal:** represent an explicit interpretation linked to check records in a convergence decision.
+
+**Contract:** the interpretation must be non-empty and cite at least one unique basis check ID that exists in the referenced convergence. Basis IDs are canonicalized, so their input order does not affect the meaning identifier. Interpretations can describe accepted or rejected proposals.
+
+**Trust boundary:** this layer validates references only. It does not establish that an interpretation is true, high quality, authored by a trusted actor, or semantically correct.
+
+**Acceptance:** valid evidence references, deterministic identity, order independence, interpretation of rejected outcomes, invalid convergence, empty interpretation/basis, duplicate/unknown basis IDs and immutability.

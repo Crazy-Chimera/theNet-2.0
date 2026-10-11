@@ -3,6 +3,7 @@
 from .agent_state import AgentState, create_agent_state
 from .convergence import Convergence, VerificationCheck, create_convergence, create_verification_check
 from .genesis import Genesis, create_genesis
+from .meaning import Meaning, create_meaning
 from .memory import MemoryEntry, create_memory_entry
 from .movement import Movement, create_movement
 from .relation import Relation, create_relation
@@ -13,6 +14,7 @@ __all__ = [
     "AgentState",
     "Convergence",
     "Genesis",
+    "Meaning",
     "MemoryEntry",
     "Movement",
     "Relation",
@@ -22,6 +24,7 @@ __all__ = [
     "create_agent_state",
     "create_convergence",
     "create_genesis",
+    "create_meaning",
     "create_memory_entry",
     "create_movement",
     "create_relation",

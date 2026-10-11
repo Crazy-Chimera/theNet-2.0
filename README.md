@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 7 — Γ Convergence implemented; CI verification pending.**
+**Status: Iteration 8 — Π Meaning implemented; CI verification pending.**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
@@ -19,6 +19,7 @@ The `thenet_core` package implements:
 - `MemoryEntry`: immutable metadata linking a movement into a per-subject state chain; stores a payload digest rather than raw payload.
 - `Resonance`: deterministic coherence snapshot binding a structure to memory entries whose Genesis, subject, chain continuity and terminal state at each chain tip validate.
 - `VerificationCheck` and `Convergence`: deterministic accept/reject decision from explicit required checks; missing or failed checks reject a proposal.
+- `Meaning`: a declared interpretation linked to existing convergence check records; it does not elevate interpretation into fact.
 - Canonical JSON and SHA-256 identity derivation.
 - Automated positive, invalid-input, immutability, integrity and determinism tests.
 
@@ -43,4 +44,4 @@ These are target architecture choices, not a claim that every service is already
 - Architecture contract: `docs/ARCHITECTURE.md`
 - Context and invariants: `docs/CONTEXT.md`
 
-Convergence evaluates supplied check records only. It does not authenticate evidence, execute proposals, or activate changes. No runtime or infrastructure integration is considered complete until its tests and verification evidence are recorded.
+Convergence evaluates supplied check records only. Meaning validates references to those records, not the truth or semantics of the interpretation. Neither module authenticates evidence, executes proposals, or activates changes. No runtime or infrastructure integration is considered complete until its tests and verification evidence are recorded.
