@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 5 — Ω² Memory implementation committed; CI verification pending.**
+**Status: Iteration 6 — ΦΩ² Resonance implementation committed; CI verification pending.**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
@@ -17,6 +17,7 @@ The `thenet_core` package implements:
 - `Structure`: deterministic snapshot validating state ancestry, unique subjects and relation endpoints.
 - `Movement`: immutable transition record between distinct states of the same subject and Genesis.
 - `MemoryEntry`: immutable metadata linking a movement into a per-subject state chain; stores a payload digest rather than raw payload.
+- `Resonance`: deterministic coherence snapshot binding a structure to memory entries whose Genesis, subject, terminal state and predecessor links validate.
 - Canonical JSON and SHA-256 identity derivation.
 - Automated positive, invalid-input, immutability, integrity and determinism tests.
 

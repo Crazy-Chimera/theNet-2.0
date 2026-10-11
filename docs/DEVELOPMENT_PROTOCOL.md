@@ -26,36 +26,22 @@
 
 For each iteration record the goal, contract, changed files, tests and exact results, integrity considerations, limitations, commit SHA and next bounded step.
 
-## Iteration 1 — complete
+## Iterations 1–5 — complete
 
-Context, architecture layers, invariants and development gates are documented. No infrastructure was represented as deployed.
+Iterations 1–2 documented the architecture and established Genesis → Relation → AgentState. Iteration 2 CI passed for `1a331050b09ad9b8926a0730a736fa0597f688db`.
 
-## Iteration 2 — complete
+Iteration 3 implemented Φ Structure; CI passed for `112db354f15669ecd9233b2391788011d9ba52c5` (run 38109576077).
 
-**Goal:** establish the first executable vertical slice: Genesis → Relation → AgentState.
+Iteration 4 implemented Ω Pohyb; CI passed for `d5ddd2ef42b8dfc093f68dc88b36817e1d115849` (run 38109681779).
 
-**Verification:** GitHub Actions passed for commit `1a331050b09ad9b8926a0730a736fa0597f688db`.
+Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bfd575018ca438` (run 38109761052).
 
-## Iteration 3 — complete
+## Iteration 6 — implementation submitted; CI verification pending
 
-**Goal:** implement Φ Structure as a validated snapshot over Genesis, AgentState and Relation.
+**Goal:** implement ΦΩ² Resonance as a deterministic coherence snapshot across a structure and linked memory records.
 
-**Verification:** GitHub Actions passed for commit `112db354f15669ecd9233b2391788011d9ba52c5` (run 38109576077).
+**Contract:** every memory entry must share the structure Genesis, refer to a represented subject, and end at that subject's current state. Referenced predecessor entries must be included and form a contiguous chain. Entry IDs are unique and canonical ordering makes resonance identity independent of input ordering.
 
-## Iteration 4 — complete
+**Acceptance:** coherent chain, order-independent deterministic identity, invalid types, foreign Genesis, terminal-state mismatch, missing predecessor, duplicate entries and immutability.
 
-**Goal:** implement Ω Pohyb as an immutable record of a state transition.
-
-**Contract:** both states must be AgentState records for the same subject and Genesis; their identifiers must differ; cause must be non-empty; movement identity is deterministic from transition fields. Recording a movement does not mutate state, execute an agent, authorize the transition or persist data.
-
-**Verification:** GitHub Actions passed for commit `d5ddd2ef42b8dfc093f68dc88b36817e1d115849` (run 38109681779).
-
-## Iteration 5 — implementation submitted; CI verification pending
-
-**Goal:** implement Ω² Memory as a deterministic, linked record of a movement and payload digest.
-
-**Contract:** raw payload is not retained; entries link to movement and optional predecessor; predecessor must share subject and Genesis and end at the new movement's start state. Hashes provide local integrity identifiers, not external authenticity or proof of durable persistence.
-
-**Acceptance:** deterministic IDs, payload digest only, contiguous chain, cross-subject/cross-Genesis rejection, disconnected chain rejection, invalid inputs and immutability.
-
-**Known limits:** entries are in-memory domain values, not a durable database ledger. Timestamp strings are not parsed/normalized as strict UTC.
+**Known limits:** this validates supplied metadata only. It does not authenticate signatures, prove causality, provide external persistence or calculate semantic resonance.
