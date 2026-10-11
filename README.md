@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 18 — live PostgreSQL 16 integration tests added; CI passed (run 38114828761, 178 tests).**
+**Status: Iteration 20 — PostgreSQL-backed idempotent authorization-result persistence implemented; CI passed (run 38115316244).**
 
 theNet-2.0 implements a relational, evolutionary network architecture while keeping infrastructure integrations explicit and verifiable.
 
@@ -27,7 +27,9 @@ from thenet_core import PostgresNonceStore
 nonce_store = PostgresNonceStore(connection_factory)
 ```
 
-The connection factory must return a fresh DB-API connection. Apply the SQL migration before use. The table primary key `(scope, nonce)` coordinates duplicate claims across processes sharing the same PostgreSQL database; expired rows are pruned inside each claim transaction. Configure connection timeouts, TLS, credentials and database availability in deployment infrastructure.
+The connection factory must return a fresh DB-API connection. Apply `migrations/0001_nonce_claims.sql` before use. For durable idempotent authorization results, also apply `migrations/0002_authorization_results.sql`. The table primary key `(scope, nonce)` coordinates duplicate claims across processes sharing the same PostgreSQL database; expired rows are pruned inside claim transactions.
+
+When the supplied store supports `claim_result`, `authorize_commit_intent` stores the authorized result and nonce claims in one PostgreSQL transaction. A retry with the same intent ID and request digest returns the persisted decision; reusing the operation ID with different request evidence is rejected. The persisted result expires no later than the shortest attestation expiry. Stores that only implement `claim_many` retain fail-closed at-most-once behavior and do not provide result recovery. This is idempotent decision persistence, not idempotent execution: no external side effect is executed by this package.
 \n## Platform layers
 
 1. Infrastructure: DNS, TCP/IP, TLS 1.3, HTTP/2, WebSockets and managed/cloud storage.

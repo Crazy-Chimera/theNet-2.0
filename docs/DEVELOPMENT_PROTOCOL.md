@@ -54,3 +54,18 @@ The earlier iterations establish Genesis → Relation → AgentState → Structu
 **Integration coverage:** persistence across separate store instances; all-or-none rollback when a batch contains a conflicting nonce; 12 concurrent attempts using independent database connections with exactly one successful claim; and expired-claim pruning followed by reuse.
 **Verification:** CI run 38114828761 passed for implementation commit 38a519f770418feac3a3fc9a85fed332632129c2. Build and package installation succeeded; **178 tests passed in 0.60 seconds**, including live PostgreSQL integration tests.
 **Limitations:** this is an ephemeral PostgreSQL 16 CI service, not a production deployment. Production readiness still requires deployment-specific credentials/TLS, connection limits/timeouts, migration management, observability, backups and operational failure testing. No production database or multi-host deployment is claimed.
+
+
+## Iteration 19 — fail closed on nonce-store errors
+**Goal:** ensure storage outages and ambiguous transaction outcomes cannot be reported as successful authorization.
+**Contract:** exceptions from `NonceStore.claim_many` return `rejected/nonce_store_unavailable`; an already-consumed nonce returns `rejected/replay_detected`. No fallback to process-local state is performed.
+**Ambiguous commit test:** CI run 38115193371 passed for commit fe8f01861890cc994481bf384e1e997f810dd52f. The test simulates a nonce claim committed before the client loses confirmation; the first attempt fails closed and the retry is rejected as a replay.
+**Limitation:** this iteration did not recover the original decision after an ambiguous commit; it prevented duplicate authorization by failing closed.
+
+## Iteration 20 — atomic idempotent authorization-result persistence
+**Goal:** recover a previously committed authorization decision after an ambiguous client/database outcome without claiming its nonce a second time.
+**Schema:** migration `0002_authorization_results.sql` creates `thenet_authorization_results`, keyed by operation ID, with request digest, JSON result and expiry.
+**Contract:** `PostgresNonceStore.claim_result` inserts the operation result and all nonce claims in the same transaction. A retry with the same operation ID and request digest returns the stored result; a different digest under the same operation ID returns a conflict; a nonce conflict rolls back the new result and all new claims. Stored results expire no later than the shortest nonce/attestation expiry.
+**Authorization integration:** `authorize_commit_intent` uses `claim_result` when the provided store implements it. The request digest binds the intent ID, evidence IDs and policy fields. Legacy stores implementing only `claim_many` retain fail-closed replay protection, without result recovery.
+**Verification:** CI run 38115316244 passed for implementation commit 4fec4740b70bc57b58655acae49da9139348b756, including the live PostgreSQL 16 integration suite.
+**Limitations:** this persists authorization decisions only; it does not execute a change or guarantee idempotency of downstream side effects. Production readiness still requires deployment-specific migration management, database security, observability, backup and failure testing.
