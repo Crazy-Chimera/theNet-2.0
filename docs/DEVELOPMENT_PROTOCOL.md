@@ -46,3 +46,11 @@ The earlier iterations establish Genesis → Relation → AgentState → Structu
 **Failure behavior:** the authorization caller must treat database errors as a failed authorization attempt. Do not fall back automatically to `InMemoryNonceStore`, because that would weaken cross-process replay protection.
 **Verification:** CI run 38114620072 passed for implementation commit 8a1ae575bf30d43b8a83914aa30d0e5da9a4561d (174 tests passed). Unit tests exercise commit, conflict rollback, exception rollback and validation using a fake DB-API connection.
 **Limitations:** CI did not connect to a live PostgreSQL server. Cross-process behavior relies on PostgreSQL transaction and unique-constraint semantics and still requires a live integration test, migration execution, connection/security configuration and operational monitoring before production use.
+
+
+## Iteration 18 — live PostgreSQL integration verification
+**Goal:** verify the transactional nonce adapter against a real PostgreSQL service rather than only a DB-API fake.
+**CI setup:** workflow run 38114828761 starts a PostgreSQL 16 service container, installs Psycopg 3 for tests, and sets `THENET_TEST_POSTGRES_DSN` only in the CI job environment.
+**Integration coverage:** persistence across separate store instances; all-or-none rollback when a batch contains a conflicting nonce; 12 concurrent attempts using independent database connections with exactly one successful claim; and expired-claim pruning followed by reuse.
+**Verification:** CI run 38114828761 passed for implementation commit 38a519f770418feac3a3fc9a85fed332632129c2. Build and package installation succeeded; **178 tests passed in 0.60 seconds**, including live PostgreSQL integration tests.
+**Limitations:** this is an ephemeral PostgreSQL 16 CI service, not a production deployment. Production readiness still requires deployment-specific credentials/TLS, connection limits/timeouts, migration management, observability, backups and operational failure testing. No production database or multi-host deployment is claimed.
