@@ -92,7 +92,7 @@ def test_closure_rejects_wrong_types():
         ("resonance", object(), "resonance must be a Resonance"),
         ("convergence", object(), "convergence must be a Convergence"),
         ("meaning", object(), "meaning must be a Meaning"),
-        ("expression", object(), "expression must be an Expression"),
+        ("expression", object(), "expression must be a Expression"),
         ("self_knowledge", object(), "self_knowledge must be a SelfKnowledge"),
         ("codefinition", object(), "codefinition must be a CoDefinition"),
     ],
@@ -138,7 +138,12 @@ def test_disputed_definition_and_rejected_decision_remain_explicit():
     result = build(codefinition=disputed)
     assert result.agreement_status == "disputed"
     assert result.verification_status == "unverified"
-    rejected = create_convergence(RESONANCE, "proposal:rejected", ("unit-tests",), ())
+    rejected = create_convergence(
+        RESONANCE,
+        "proposal:rejected",
+        ("unit-tests",),
+        (create_verification_check("unit-tests", False, "b" * 64),),
+    )
     rejected_meaning = create_meaning(rejected, "Required check missing.", ("unit-tests",))
     # The closure rejects a meaning from a different convergence rather than
     # silently combining records from different decision chains.
