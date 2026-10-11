@@ -14,6 +14,8 @@ if not DSN:
     pytest.skip("THENET_TEST_POSTGRES_DSN is not configured", allow_module_level=True)
 
 from thenet_core.postgres_nonce_store import PostgresNonceStore
+from test_authorization import NOW as AUTH_NOW, POLICY, TRUST, decide, evidence
+from test_commit_intent import build
 
 MIGRATION = Path(__file__).resolve().parents[1] / "migrations" / "0001_nonce_claims.sql"
 NOW = "2026-10-11T07:00:00Z"
@@ -111,3 +113,76 @@ def test_idempotent_result_rolls_back_when_nonce_conflicts():
             "SELECT nonce FROM thenet_nonce_claims WHERE nonce = %s",
             ("fresh-in-batch",),
         ).fetchone() is None
+
+
+def test_authorization_retry_recovers_result_after_lost_commit_confirmation():
+    intent = build()
+    attestation = evidence(intent)
+    db = store()
+
+    class LostConfirmation:
+        first = True
+
+        def claim_result(self, operation_id, request_digest, claims, result_payload, now):
+            result = db.claim_result(operation_id, request_digest, claims, result_payload, now)
+            if self.first:
+                self.first = False
+                raise RuntimeError("commit succeeded but confirmation was lost")
+            return result
+
+    adapter = LostConfirmation()
+    first = decide(intent, (attestation,), now=AUTH_NOW, nonce_store=adapter)
+    retry = decide(intent, (attestation,), now=AUTH_NOW, nonce_store=adapter)
+
+    assert (first.status, first.reason) == ("rejected", "nonce_store_unavailable")
+    assert (retry.status, retry.reason) == ("authorized", "policy_evidence_and_nonce_valid")
+    assert retry.decided_at == AUTH_NOW
+    with psycopg.connect(DSN) as conn:
+        assert conn.execute(
+            "SELECT COUNT(*) FROM thenet_authorization_results WHERE operation_id = %s",
+            (intent.id,),
+        ).fetchone()[0] == 1
+        assert conn.execute(
+            "SELECT COUNT(*) FROM thenet_nonce_claims WHERE nonce = %s",
+            (attestation.nonce,),
+        ).fetchone()[0] == 1
+
+
+def test_concurrent_authorization_retries_return_one_persisted_decision():
+    intent = build()
+    attestation = evidence(intent)
+    workers = 8
+    barrier = Barrier(workers)
+
+    def authorize(_):
+        barrier.wait(timeout=10)
+        return decide(intent, (attestation,), now=AUTH_NOW, nonce_store=store())
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        results = list(pool.map(authorize, range(workers)))
+
+    assert all(result.status == "authorized" for result in results)
+    assert len(set(results)) == 1
+    with psycopg.connect(DSN) as conn:
+        assert conn.execute(
+            "SELECT COUNT(*) FROM thenet_authorization_results WHERE operation_id = %s",
+            (intent.id,),
+        ).fetchone()[0] == 1
+        assert conn.execute(
+            "SELECT COUNT(*) FROM thenet_nonce_claims WHERE nonce = %s",
+            (attestation.nonce,),
+        ).fetchone()[0] == 1
+
+
+def test_same_intent_with_different_policy_digest_is_rejected():
+    from dataclasses import replace
+
+    intent = build()
+    attestation = evidence(intent)
+    db = store()
+    first = decide(intent, (attestation,), now=AUTH_NOW, nonce_store=db)
+    changed_policy = replace(POLICY, version=POLICY.version + 1)
+    conflict = decide(intent, (attestation,), policy=changed_policy, now=AUTH_NOW, nonce_store=db)
+
+    assert first.status == "authorized"
+    assert (conflict.status, conflict.reason) == ("rejected", "idempotency_key_conflict")
