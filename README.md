@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 14 — Ed25519 attestation verification implemented; CI verification pending.**
+**Status: Iteration 14 — Ed25519 attestation verification complete; CI passed (run 38111078596, 152 tests).**
 
 theNet-2.0 is an implementation of a relational, evolutionary network architecture, following the existing `Crazy-Chimera/theNet` project while keeping infrastructure integrations explicit and verifiable.
 
