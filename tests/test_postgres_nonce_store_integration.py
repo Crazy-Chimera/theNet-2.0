@@ -24,10 +24,13 @@ EXPIRY = "2026-10-11T08:00:00Z"
 def prepare_table():
     with psycopg.connect(DSN) as conn:
         conn.execute(MIGRATION.read_text(encoding="utf-8"))
+        conn.execute((MIGRATION.parent / "0002_authorization_results.sql").read_text(encoding="utf-8"))
         conn.execute("TRUNCATE TABLE thenet_nonce_claims")
+        conn.execute("TRUNCATE TABLE thenet_authorization_results")
     yield
     with psycopg.connect(DSN) as conn:
         conn.execute("TRUNCATE TABLE thenet_nonce_claims")
+        conn.execute("TRUNCATE TABLE thenet_authorization_results")
 
 
 def store():
@@ -71,3 +74,40 @@ def test_expired_claim_is_pruned_and_nonce_can_be_reused():
             ("issuer/key", "old", "2026-10-11T06:59:00Z"),
         )
     assert store().claim_many((("issuer/key", "old", EXPIRY),), NOW)
+
+def test_idempotent_result_and_nonce_commit_atomically():
+    db = store()
+    claims = (("issuer/key", "idempotent", EXPIRY),)
+    payload = {"status": "authorized", "operation_id": "op-1"}
+    first = db.claim_result("op-1", "digest-a", claims, payload, NOW)
+    retry = db.claim_result("op-1", "digest-a", claims, {"status": "ignored"}, NOW)
+    assert first == ("stored", payload)
+    assert retry == ("existing", payload)
+
+
+def test_idempotency_key_cannot_be_reused_for_different_request():
+    db = store()
+    claims = (("issuer/key", "idempotent-conflict", EXPIRY),)
+    payload = {"status": "authorized", "operation_id": "op-2"}
+    assert db.claim_result("op-2", "digest-a", claims, payload, NOW) == ("stored", payload)
+    assert db.claim_result("op-2", "digest-b", claims, payload, NOW) == ("conflict", None)
+
+
+def test_idempotent_result_rolls_back_when_nonce_conflicts():
+    db = store()
+    assert db.claim_many((("issuer/key", "already-taken", EXPIRY),), NOW)
+    result = db.claim_result(
+        "op-3", "digest-c",
+        (("issuer/key", "fresh-in-batch", EXPIRY), ("issuer/key", "already-taken", EXPIRY)),
+        {"status": "authorized"}, NOW,
+    )
+    assert result == ("replay", None)
+    with psycopg.connect(DSN) as conn:
+        assert conn.execute(
+            "SELECT operation_id FROM thenet_authorization_results WHERE operation_id = %s",
+            ("op-3",),
+        ).fetchone() is None
+        assert conn.execute(
+            "SELECT nonce FROM thenet_nonce_claims WHERE nonce = %s",
+            ("fresh-in-batch",),
+        ).fetchone() is None

@@ -6,7 +6,8 @@ for a PostgreSQL driver such as psycopg. The migration must be applied first.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Callable, Any
+import json
+from typing import Callable, Any, Mapping
 
 from .replay_protection import NonceClaim, _utc
 
@@ -73,6 +74,93 @@ class PostgresNonceStore:
                     return False
             connection.commit()
             return True
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            if cursor is not None:
+                cursor.close()
+            connection.close()
+
+    def claim_result(
+        self,
+        operation_id: str,
+        request_digest: str,
+        claims: tuple[NonceClaim, ...],
+        result_payload: Mapping[str, Any],
+        now: str,
+    ) -> tuple[str, dict[str, Any] | None]:
+        """Atomically persist nonce claims and an idempotent operation result."""
+        if not isinstance(operation_id, str) or not operation_id.strip():
+            raise ValueError("operation_id must be a non-empty string")
+        if not isinstance(request_digest, str) or not request_digest.strip():
+            raise ValueError("request_digest must be a non-empty string")
+        if not isinstance(result_payload, Mapping):
+            raise ValueError("result_payload must be a mapping")
+        if not isinstance(claims, tuple) or not claims:
+            raise ValueError("claims must be a non-empty tuple")
+        current = _utc(now)
+        parsed: list[tuple[str, str, datetime]] = []
+        seen: set[tuple[str, str]] = set()
+        for item in claims:
+            if not isinstance(item, tuple) or len(item) != 3:
+                raise ValueError("each nonce claim must contain scope, nonce and expiry")
+            scope, nonce, expires_at = item
+            if not isinstance(scope, str) or not scope.strip() or not isinstance(nonce, str) or not nonce.strip():
+                raise ValueError("nonce scope and value must be non-empty strings")
+            expiry = _utc(expires_at)
+            if expiry <= current:
+                raise ValueError("nonce claim expiry must be later than now")
+            key = (scope, nonce)
+            if key in seen:
+                return ("replay", None)
+            seen.add(key)
+            parsed.append((scope, nonce, expiry))
+        payload = dict(result_payload)
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        expires_at = min(item[2] for item in parsed)
+        connection = self._connection_factory()
+        cursor = None
+        try:
+            if hasattr(connection, "autocommit"):
+                connection.autocommit = False
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM thenet_nonce_claims WHERE expires_at <= %s", (current,))
+            cursor.execute("DELETE FROM thenet_authorization_results WHERE expires_at <= %s", (current,))
+            cursor.execute(
+                "INSERT INTO thenet_authorization_results "
+                "(operation_id, request_digest, result_json, expires_at) "
+                "VALUES (%s, %s, %s, %s) ON CONFLICT (operation_id) DO NOTHING",
+                (operation_id, request_digest, encoded, expires_at),
+            )
+            if cursor.rowcount != 1:
+                cursor.execute(
+                    "SELECT request_digest, result_json FROM thenet_authorization_results "
+                    "WHERE operation_id = %s FOR UPDATE",
+                    (operation_id,),
+                )
+                row = cursor.fetchone()
+                if row is None:
+                    connection.rollback()
+                    return ("conflict", None)
+                existing_digest, existing_json = row
+                connection.commit()
+                if existing_digest != request_digest:
+                    return ("conflict", None)
+                if isinstance(existing_json, str):
+                    existing_json = json.loads(existing_json)
+                return ("existing", dict(existing_json))
+            for scope, nonce, expiry in parsed:
+                cursor.execute(
+                    "INSERT INTO thenet_nonce_claims (scope, nonce, expires_at) "
+                    "VALUES (%s, %s, %s) ON CONFLICT (scope, nonce) DO NOTHING",
+                    (scope, nonce, expiry),
+                )
+                if cursor.rowcount != 1:
+                    connection.rollback()
+                    return ("replay", None)
+            connection.commit()
+            return ("stored", payload)
         except Exception:
             connection.rollback()
             raise

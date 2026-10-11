@@ -100,11 +100,45 @@ def authorize_commit_intent(
         return _reject(intent, "required_issuer_evidence_missing", evidence_ids, now)
     if nonce_store is None:
         return _reject(intent, "replay_store_required", evidence_ids, now)
+    result_payload = {
+        "intent_id": intent.id,
+        "status": "authorized",
+        "reason": "policy_evidence_and_nonce_valid",
+        "evidence_ids": list(evidence_ids),
+        "decided_at": now,
+        "version": SCHEMA_VERSION,
+    }
+    if callable(getattr(nonce_store, "claim_result", None)):
+        request_digest = sha256(canonical_json({
+            "intent_id": intent.id,
+            "evidence_ids": list(evidence_ids),
+            "allowed_actions": list(policy.allowed_actions),
+            "allowed_targets": list(policy.allowed_targets),
+            "required_context": policy.required_context,
+            "required_issuers": list(policy.required_issuers),
+            "policy_version": policy.version,
+        }).encode("utf-8")).hexdigest()
+        try:
+            outcome, stored = nonce_store.claim_result(
+                intent.id, request_digest, tuple(claims), result_payload, now
+            )
+        except Exception:
+            return _reject(intent, "nonce_store_unavailable", evidence_ids, now)
+        if outcome == "replay":
+            return _reject(intent, "replay_detected", evidence_ids, now)
+        if outcome == "conflict" or stored is None:
+            return _reject(intent, "idempotency_key_conflict", evidence_ids, now)
+        return AuthorizationDecision(
+            intent_id=stored["intent_id"],
+            status=stored["status"],
+            reason=stored["reason"],
+            evidence_ids=tuple(stored["evidence_ids"]),
+            decided_at=stored["decided_at"],
+            version=stored["version"],
+        )
     try:
         claimed = nonce_store.claim_many(tuple(claims), now)
     except Exception:
-        # Storage outages and transaction errors must never become authorization.
-        # Keep the decision non-sensitive; operational details belong in protected logs.
         return _reject(intent, "nonce_store_unavailable", evidence_ids, now)
     if not claimed:
         return _reject(intent, "replay_detected", evidence_ids, now)
