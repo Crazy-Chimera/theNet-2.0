@@ -1,6 +1,6 @@
 # theNet-2.0
 
-**Status: Iteration 20 — PostgreSQL-backed idempotent authorization-result persistence implemented; CI passed (run 38115316244).**
+**Status: Iteration 21 — retry/concurrency integration coverage for idempotent authorization results; implementation fix verified by CI (run 38121526379).**
 
 theNet-2.0 implements a relational, evolutionary network architecture while keeping infrastructure integrations explicit and verifiable.
 
