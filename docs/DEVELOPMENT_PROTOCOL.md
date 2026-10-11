@@ -38,3 +38,11 @@ The earlier iterations establish Genesis → Relation → AgentState → Structu
 **Acceptance:** second use rejected, expired claims pruned, batch claims atomic, duplicate claims rejected, and concurrent claims yield one winner.
 **Trust boundary:** InMemoryNonceStore is process-local and non-durable. Production requires a shared durable transactional implementation; no such adapter is included in this iteration.
 **CI:** run 38111490989 passed for commit 552039bf443265ec20ddd98bf01be9befbbbdadc (168 tests passed).
+
+
+## Iteration 17 — transactional PostgreSQL nonce store
+**Goal:** provide a durable `NonceStore` adapter so workers sharing PostgreSQL can coordinate nonce claims across process restarts.
+**Contract:** `PostgresNonceStore` accepts a DB-API connection factory. The migration creates `thenet_nonce_claims` with a primary key on `(scope, nonce)` and an expiry index. Each batch deletes expired rows, inserts all claims using `ON CONFLICT DO NOTHING`, and commits only if every insert succeeds. A conflict rolls back the batch and returns `False`; database exceptions roll back and propagate.
+**Failure behavior:** the authorization caller must treat database errors as a failed authorization attempt. Do not fall back automatically to `InMemoryNonceStore`, because that would weaken cross-process replay protection.
+**Verification:** CI run 38114620072 passed for implementation commit 8a1ae575bf30d43b8a83914aa30d0e5da9a4561d (174 tests passed). Unit tests exercise commit, conflict rollback, exception rollback and validation using a fake DB-API connection.
+**Limitations:** CI did not connect to a live PostgreSQL server. Cross-process behavior relies on PostgreSQL transaction and unique-constraint semantics and still requires a live integration test, migration execution, connection/security configuration and operational monitoring before production use.
