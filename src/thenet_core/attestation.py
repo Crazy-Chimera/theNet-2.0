@@ -135,7 +135,7 @@ def verify_attestation(
                                attestation.payload_digest, attestation.issued_at, attestation.expires_at,
                                attestation.nonce, attestation.key_id)
         Ed25519PublicKey.from_public_bytes(key.public_key).verify(signature, body)
-        expected_id = sha256(body + b"." + signature.decode("ascii").encode("ascii")).hexdigest()
+        expected_id = sha256(body + b"." + attestation.signature.encode("ascii")).hexdigest()
         if attestation.id != expected_id:
             return AttestationVerification(attestation.id, "rejected", "attestation_id_mismatch", key.key_id, verified_at)
     except (ValueError, TypeError, binascii.Error):
