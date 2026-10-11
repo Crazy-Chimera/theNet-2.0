@@ -76,3 +76,13 @@ def test_records_immutable_and_do_not_retain_payload():
         result.status = "accepted"
     assert not hasattr(attestation, "payload")
     assert attestation.payload_digest
+
+def test_attestation_id_is_bound_to_signed_content():
+    original = signed()
+    tampered = SignedAttestation(
+        "f" * 64, original.issuer_id, original.subject_id, original.context,
+        original.payload_digest, original.issued_at, original.expires_at,
+        original.nonce, original.key_id, original.signature,
+    )
+    result = verify_attestation(tampered, TRUST, NOW)
+    assert (result.status, result.reason) == ("rejected", "attestation_id_mismatch")
