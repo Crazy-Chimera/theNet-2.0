@@ -24,13 +24,7 @@
 
 ## Standard evidence
 
-For each iteration record:
-- iteration number and goal;
-- contract and changed files;
-- tests and exact results;
-- security/integrity considerations;
-- known limitations;
-- commit SHA and next bounded step.
+For each iteration record the goal, contract, changed files, tests and exact results, integrity considerations, limitations, commit SHA and next bounded step.
 
 ## Iteration 1 — complete
 
@@ -40,16 +34,22 @@ Context, architecture layers, invariants and development gates are documented. N
 
 **Goal:** establish the first executable vertical slice: Genesis → Relation → AgentState.
 
-**Contract:** immutable versioned values; non-empty string boundary validation; stable SHA-256 identifiers over canonical JSON; directed relations; AgentState identity anchored to a Genesis identifier; no network/database dependencies.
+**Verification:** GitHub Actions passed for commit `1a331050b09ad9b8926a0730a736fa0597f688db`.
 
-**Verification:** GitHub Actions passed for commit `1a331050b09ad9b8926a0730a736fa0597f688db`. The workflow builds and installs the package and runs the test suite.
-
-## Iteration 3 — implementation submitted; CI evidence pending
+## Iteration 3 — complete
 
 **Goal:** implement Φ Structure as a validated snapshot over Genesis, AgentState and Relation.
 
 **Contract:** structure identity is deterministic and independent of input ordering; states share the supplied Genesis; subject IDs and record IDs are unique; every directed relation endpoint resolves to a subject in the snapshot; returned collections are immutable tuples.
 
-**Acceptance:** positive, invalid-type, foreign-Genesis, dangling-endpoint, duplicate-subject, immutability and deterministic-order tests. CI must pass before this iteration is marked complete.
+**Verification:** GitHub Actions passed for commit `112db354f15669ecd9233b2391788011d9ba52c5` (run 38109576077).
 
-**Known limits:** identifiers are content-derived hashes, not proof of real-world identity, authorization or authenticity. Timestamp strings are required to be non-empty but are not yet parsed or normalized to a strict UTC format.
+## Iteration 4 — implementation submitted; CI verification pending
+
+**Goal:** implement Ω Pohyb as an immutable record of a state transition.
+
+**Contract:** both states must be AgentState records for the same subject and Genesis; their identifiers must differ; cause must be non-empty; movement identity is deterministic from the transition fields. Recording a movement does not mutate state, execute an agent, authorize the transition or persist data.
+
+**Acceptance:** valid transition, deterministic identity, invalid types, cross-subject/cross-Genesis transitions, no-op transition, empty cause and immutability tests.
+
+**Known limits:** state records contain identifiers and timestamps, not a full state payload. Movement is a transition record, not a transition engine or proof of authorization. Timestamps remain non-empty strings and are not parsed/normalized as strict UTC.
