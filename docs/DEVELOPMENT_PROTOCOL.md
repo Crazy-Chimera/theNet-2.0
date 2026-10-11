@@ -36,14 +36,25 @@ Iteration 4 implemented Ω Pohyb; CI passed for `d5ddd2ef42b8dfc093f68dc88b36817
 
 Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bfd575018ca438` (run 38109761052).
 
-## Iteration 6 — correction submitted; CI verification pending
+## Iteration 6 — ΦΩ² Resonance complete
 
 **Goal:** implement ΦΩ² Resonance as a deterministic coherence snapshot across a structure and linked memory records.
 
-**Contract:** every memory entry must share the structure Genesis, refer to a represented subject, and end at that subject's current state. Referenced predecessor entries must be included and form a contiguous chain. Entry IDs are unique and canonical ordering makes resonance identity independent of input ordering.
+**Contract:** every memory entry shares the structure Genesis and refers to a represented subject. Historical entries may end at prior states; each chain tip matches the current structure state. Referenced predecessor entries are included and form a contiguous chain. Entry IDs are unique and canonical ordering makes resonance identity independent of input ordering.
 
 **Acceptance:** coherent chain, order-independent deterministic identity, invalid types, foreign Genesis, terminal-state mismatch, missing predecessor, duplicate entries and immutability.
 
-**CI correction:** the initial implementation incorrectly required every historical entry to end at the current state. Validation now applies the current-state check only to chain tips; historical entries remain subject to predecessor continuity checks.
+**CI correction:** the initial implementation incorrectly required every historical entry to end at the current state. Validation was corrected to check the current state only at chain tips. Corrected CI passed in run 38109920516 for commit 02a9996bf93a3b689c5f9845a87211f2730d32c4.
 
 **Known limits:** this validates supplied metadata only. It does not authenticate signatures, prove causality, provide external persistence or calculate semantic resonance.
+
+
+## Iteration 7 — Γ Convergence implementation submitted; CI verification pending
+
+**Goal:** create a deterministic decision record for a proposal based on explicit verification checks.
+
+**Contract:** required check IDs must be unique and non-empty. Check records must be typed, unique and limited to the declared required set. A proposal is accepted only if every required check is present and passing; missing or failed checks reject it. Canonical ordering makes the result independent of input order.
+
+**Trust boundary:** check status and evidence digests are supplied claims. This module does not authenticate evidence, run checks, interpret semantics, execute proposals or activate changes.
+
+**Acceptance:** complete passing checks, missing check, failed check, deterministic order independence, duplicate/unrequested checks, invalid types and immutability.
