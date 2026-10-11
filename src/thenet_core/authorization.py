@@ -60,8 +60,11 @@ def authorize_commit_intent(
     if not isinstance(trusted_keys, Mapping):
         raise ValueError("trusted_keys must be a mapping")
     require_non_empty_strings(now=now, required_context=policy.required_context)
-    if nonce_store is not None and not callable(getattr(nonce_store, "claim_many", None)):
-        raise ValueError("nonce_store must implement claim_many")
+    if nonce_store is not None:
+        supports_atomic_result = callable(getattr(nonce_store, "claim_result", None))
+        supports_atomic_claim = callable(getattr(nonce_store, "claim_many", None))
+        if not (supports_atomic_result or supports_atomic_claim):
+            raise ValueError("nonce_store must implement claim_result or claim_many")
     if not policy.required_issuers or any(not isinstance(v, str) or not v.strip() for v in policy.required_issuers):
         raise ValueError("required_issuers must contain non-empty issuer IDs")
     if len(set(policy.required_issuers)) != len(policy.required_issuers):
