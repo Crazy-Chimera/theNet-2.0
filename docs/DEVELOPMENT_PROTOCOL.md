@@ -40,16 +40,22 @@ Context, architecture layers, invariants and development gates are documented. N
 
 **Goal:** implement Φ Structure as a validated snapshot over Genesis, AgentState and Relation.
 
-**Contract:** structure identity is deterministic and independent of input ordering; states share the supplied Genesis; subject IDs and record IDs are unique; every directed relation endpoint resolves to a subject in the snapshot; returned collections are immutable tuples.
-
 **Verification:** GitHub Actions passed for commit `112db354f15669ecd9233b2391788011d9ba52c5` (run 38109576077).
 
-## Iteration 4 — implementation submitted; CI verification pending
+## Iteration 4 — complete
 
 **Goal:** implement Ω Pohyb as an immutable record of a state transition.
 
-**Contract:** both states must be AgentState records for the same subject and Genesis; their identifiers must differ; cause must be non-empty; movement identity is deterministic from the transition fields. Recording a movement does not mutate state, execute an agent, authorize the transition or persist data.
+**Contract:** both states must be AgentState records for the same subject and Genesis; their identifiers must differ; cause must be non-empty; movement identity is deterministic from transition fields. Recording a movement does not mutate state, execute an agent, authorize the transition or persist data.
 
-**Acceptance:** valid transition, deterministic identity, invalid types, cross-subject/cross-Genesis transitions, no-op transition, empty cause and immutability tests.
+**Verification:** GitHub Actions passed for commit `d5ddd2ef42b8dfc093f68dc88b36817e1d115849` (run 38109681779).
 
-**Known limits:** state records contain identifiers and timestamps, not a full state payload. Movement is a transition record, not a transition engine or proof of authorization. Timestamps remain non-empty strings and are not parsed/normalized as strict UTC.
+## Iteration 5 — implementation submitted; CI verification pending
+
+**Goal:** implement Ω² Memory as a deterministic, linked record of a movement and payload digest.
+
+**Contract:** raw payload is not retained; entries link to movement and optional predecessor; predecessor must share subject and Genesis and end at the new movement's start state. Hashes provide local integrity identifiers, not external authenticity or proof of durable persistence.
+
+**Acceptance:** deterministic IDs, payload digest only, contiguous chain, cross-subject/cross-Genesis rejection, disconnected chain rejection, invalid inputs and immutability.
+
+**Known limits:** entries are in-memory domain values, not a durable database ledger. Timestamp strings are not parsed/normalized as strict UTC.
