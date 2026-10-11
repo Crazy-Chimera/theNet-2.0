@@ -144,11 +144,33 @@ def test_disputed_definition_and_rejected_decision_remain_explicit():
         ("unit-tests",),
         (create_verification_check("unit-tests", False, "b" * 64),),
     )
-    rejected_meaning = create_meaning(rejected, "Required check missing.", ("unit-tests",))
-    # The closure rejects a meaning from a different convergence rather than
-    # silently combining records from different decision chains.
-    with pytest.raises(ValueError, match="supplied convergence"):
-        build(convergence=rejected, meaning=rejected_meaning)
+    rejected_meaning = create_meaning(rejected, "A required check failed.", ("unit-tests",))
+    rejected_expression = create_expression(
+        rejected_meaning, "internal", "text/plain", "Rejected proposal"
+    )
+    rejected_sk = create_self_knowledge(
+        rejected_expression,
+        "A bounded model for a rejected proposal.",
+        ("record outcomes",),
+        ("cannot authenticate evidence",),
+    )
+    rejected_codefinition = create_codefinition(
+        "context:rejected",
+        (
+            create_codefinition_contribution(rejected_sk, "agent:a", "Record rejection.", True),
+            create_codefinition_contribution(SK2, "agent:b", "I acknowledge the record.", True),
+        ),
+    )
+    result = build(
+        convergence=rejected,
+        meaning=rejected_meaning,
+        expression=rejected_expression,
+        self_knowledge=rejected_sk,
+        codefinition=rejected_codefinition,
+    )
+    assert result.convergence_decision == "rejected"
+    assert result.agreement_status == "agreed"
+    assert result.verification_status == "unverified"
 
 
 def test_closure_is_immutable():
