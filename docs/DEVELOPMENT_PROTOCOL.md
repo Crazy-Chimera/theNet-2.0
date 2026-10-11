@@ -75,7 +75,7 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 
 **CI result:** run 38110123950 passed for commit 9533b5b2d0f2004581d5c6528918b88b411b6a43.
 
-## Iteration 9 — Ψ Expression implementation submitted; CI verification pending
+## Iteration 9 — Ψ Expression complete
 
 **Goal:** represent a deterministic output artifact that is explicitly bound to a declared Meaning.
 
@@ -84,3 +84,16 @@ Iteration 5 implemented Ω² Memory; CI passed for `36663f2ec7f0a05b7d3ab02147bf
 **Trust boundary:** the record describes intended output only. It does not dispatch content, authenticate the referenced Meaning, or prove delivery, receipt or acceptance.
 
 **Acceptance:** valid binding, deterministic identity, identity changes when channel/format/content changes, invalid Meaning type, empty fields, immutability and explicit non-delivery semantics.
+
+
+**CI result:** run 38110210904 passed for commit 68dc818e8d89cd74272b365d578da843707ec0fc.
+
+## Iteration 10 — Θ Self-Knowledge implementation submitted; CI verification pending
+
+**Goal:** create a deterministic self-model snapshot tied to a known Expression.
+
+**Contract:** the self-model text is represented by a SHA-256 digest. The record includes canonicalized, unique capability declarations and requires at least one explicit limitation. Its ID binds the Expression, Meaning, model digest, capability claims, limitation claims and schema version.
+
+**Trust boundary:** declarations are caller-supplied. The module does not prove that capabilities exist, that limitations are complete, that the system is conscious, or that self-modification is authorized.
+
+**Acceptance:** valid source binding, deterministic/order-independent identity, changed model digest, invalid source type, empty model, missing limitations, malformed/duplicate claims and immutability.

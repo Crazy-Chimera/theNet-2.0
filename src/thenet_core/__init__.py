@@ -3,6 +3,7 @@
 from .agent_state import AgentState, create_agent_state
 from .convergence import Convergence, VerificationCheck, create_convergence, create_verification_check
 from .genesis import Genesis, create_genesis
+from .self_knowledge import SelfKnowledge, create_self_knowledge
 from .expression import Expression, create_expression
 from .meaning import Meaning, create_meaning
 from .memory import MemoryEntry, create_memory_entry
@@ -22,6 +23,7 @@ __all__ = [
     "Relation",
     "Resonance",
     "Structure",
+    "SelfKnowledge",
     "VerificationCheck",
     "create_agent_state",
     "create_convergence",
@@ -33,5 +35,6 @@ __all__ = [
     "create_relation",
     "create_resonance",
     "create_structure",
+    "create_self_knowledge",
     "create_verification_check",
 ]
